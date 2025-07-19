@@ -1,7 +1,8 @@
 // src/pages/ForgotPassword.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
+
 import { sendPasswordResetEmail } from 'firebase/auth'; // ✅ Correct import
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
