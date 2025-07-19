@@ -1,14 +1,22 @@
 import React from 'react';
-import arduinoImg from '../assets/images/arduino.jpg';
-import piImg from '../assets/images/pi.jpg';
-import esp32Img from '../assets/images/esp32.jpg';
-import sensorImg from '../assets/images/sensor.jpg';
 
 const images = [
-  { src: arduinoImg, name: 'Arduino Uno' },
-  { src: piImg, name: 'Raspberry Pi' },
-  { src: esp32Img, name: 'ESP32 Module' },
-  { src: sensorImg, name: 'Sensor Module' }
+  {
+    src: 'https://via.placeholder.com/300x200?text=Arduino+Uno',
+    name: 'Arduino Uno',
+  },
+  {
+    src: 'https://via.placeholder.com/300x200?text=Raspberry+Pi',
+    name: 'Raspberry Pi',
+  },
+  {
+    src: 'https://via.placeholder.com/300x200?text=ESP32+Module',
+    name: 'ESP32 Module',
+  },
+  {
+    src: 'https://via.placeholder.com/300x200?text=Sensor+Module',
+    name: 'Sensor Module',
+  },
 ];
 
 const Gallery = () => {
@@ -18,11 +26,14 @@ const Gallery = () => {
       <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {images.map((image, index) => (
           <li key={index} className="rounded overflow-hidden shadow-lg">
-            <img 
-              src={image.src} 
-              alt={image.name} 
+            <img
+              src={image.src}
+              alt={image.name}
               className="w-full h-48 object-cover"
-              onError={(e) => { e.target.src = 'https://via.placeholder.com/150?text=Image+Not+Found'; }}
+              onError={(e) => {
+                e.target.src =
+                  'https://via.placeholder.com/300x200?text=Image+Not+Found';
+              }}
             />
             <div className="p-4 text-center font-medium">{image.name}</div>
           </li>
