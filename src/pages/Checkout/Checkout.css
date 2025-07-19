@@ -1,0 +1,47 @@
+.checkout-container {
+  @apply max-w-4xl mx-auto px-6 py-10 bg-white rounded-lg shadow-md;
+}
+
+.checkout-progress {
+  @apply relative flex justify-between mb-10;
+}
+
+.checkout-bar {
+  @apply absolute top-5 left-0 right-0 h-1 bg-gray-300 -z-10 rounded;
+}
+
+.checkout-bar-fill {
+  @apply h-1 bg-blue-600 rounded transition-all duration-500 ease-in-out;
+}
+
+.checkout-step {
+  @apply text-center z-10 select-none;
+}
+
+.checkout-step-circle {
+  @apply w-9 h-9 mx-auto rounded-full flex items-center justify-center bg-gray-300 text-gray-700 font-semibold shadow-md;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.checkout-step-circle.current {
+  @apply bg-blue-600 text-white shadow-lg;
+}
+
+.checkout-step-circle.complete {
+  @apply bg-green-500 text-white shadow-lg;
+}
+
+.checkout-step-label {
+  @apply mt-2 text-sm font-semibold text-gray-600;
+  transition: color 0.3s ease;
+}
+
+.checkout-step.active .checkout-step-label {
+  @apply text-blue-600;
+}
+
+.checkout-back {
+  @apply flex items-center text-blue-600 mb-6 cursor-pointer font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded;
+  user-select: none;
+  transition: color 0.3s ease;
+}

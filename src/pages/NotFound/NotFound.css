@@ -1,0 +1,61 @@
+/* src/pages/NotFound.css */
+
+.notfound-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(to right, #f8fafc, #e0f2fe);
+  padding: 2rem;
+  text-align: center;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.notfound-code {
+  font-size: 6rem;
+  font-weight: 900;
+  color: #dc2626; /* Tailwind red-600 */
+  margin-bottom: 1rem;
+}
+
+.notfound-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1f2937; /* Tailwind gray-800 */
+  margin-bottom: 0.5rem;
+}
+
+.notfound-message {
+  font-size: 1rem;
+  color: #6b7280; /* Tailwind gray-500 */
+  margin-bottom: 2rem;
+  max-width: 480px;
+}
+
+.notfound-button {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background-color: #2563eb; /* Tailwind blue-600 */
+  color: #fff;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.notfound-button:hover {
+  background-color: #1d4ed8; /* Tailwind blue-700 */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

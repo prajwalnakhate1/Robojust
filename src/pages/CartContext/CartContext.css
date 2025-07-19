@@ -1,0 +1,50 @@
+/* CartContext Debug Panel (Optional for Development) */
+.cart-context-debug {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(30, 58, 138, 0.9); /* Tailwind: bg-blue-900/90 */
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+}
+
+/* Add this class dynamically if needed */
+.cart-context-debug h4 {
+  margin-top: 0;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.cart-context-debug ul {
+  padding-left: 1rem;
+  margin: 0;
+  list-style: square;
+}
+
+.cart-context-debug li {
+  margin-bottom: 4px;
+}
+
+/* Animations for future use */
+@keyframes flashBorder {
+  0% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #38bdf8; /* Tailwind: sky-400 */
+  }
+  100% {
+    border-color: transparent;
+  }
+}
+
+.cart-updated {
+  animation: flashBorder 1s ease-in-out;
+  border: 2px dashed #38bdf8;
+}

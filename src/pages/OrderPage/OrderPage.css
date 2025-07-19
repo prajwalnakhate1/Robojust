@@ -1,0 +1,105 @@
+.order-card {
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.checkout-container {
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.checkout-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.checkout-bar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e0e0e0;
+  z-index: 1;
+}
+
+.checkout-bar-fill {
+  height: 100%;
+  background: #3399cc;
+  transition: width 0.3s ease;
+}
+
+.checkout-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.checkout-step-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.checkout-step-circle.current {
+  background: #3399cc;
+  color: white;
+}
+
+.checkout-step-circle.complete {
+  background: #28a745;
+  color: white;
+}
+
+.checkout-step-label {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.checkout-step.active .checkout-step-label {
+  color: #333;
+  font-weight: bold;
+}
+
+.checkout-back {
+  display: flex;
+  align-items: center;
+  color: #3399cc;
+  font-size: 16px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.checkout-back:hover {
+  color: #286b8a;
+}

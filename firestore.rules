@@ -1,0 +1,176 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 🔐 Authentication check
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // 🔒 Ownership check
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // 🛡️ Admin check
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    // ✅ USERS Collection
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser();
+      allow update: if isOwner(userId) && isValidUser();
+      allow delete: if isAdmin();
+
+      // ✅ Validate user fields
+      function isValidUser() {
+        return request.resource.data.keys().hasAny([
+          'displayName', 'email', 'photoURL', 'phoneNumber', 'updatedAt'
+        ]) &&
+        (!('displayName' in request.resource.data) || request.resource.data.displayName is string) &&
+        (!('email' in request.resource.data) || request.resource.data.email is string) &&
+        (!('photoURL' in request.resource.data) || request.resource.data.photoURL is string) &&
+        (!('phoneNumber' in request.resource.data) || request.resource.data.phoneNumber is string) &&
+        (!('updatedAt' in request.resource.data) || request.resource.data.updatedAt is timestamp);
+      }
+
+      // ✅ ADDRESSES Subcollection
+      match /addresses/{addressId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidAddress();
+        allow update: if isOwner(userId) && isValidAddress();
+        allow delete: if isOwner(userId);
+
+        // ✅ Validate address fields
+        function isValidAddress() {
+          return request.resource.data.keys().hasAll([
+            'name', 'address', 'city', 'pincode', 'phone', 'userId'
+          ]) &&
+          request.resource.data.name is string &&
+          request.resource.data.address is string &&
+          request.resource.data.city is string &&
+          request.resource.data.pincode is string &&
+          request.resource.data.phone is string &&
+          request.resource.data.userId == userId;
+        }
+      }
+    }
+
+    // ✅ CARTS Collection
+    match /carts/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+
+      // ✅ ITEMS Subcollection
+      match /items/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidCartItem();
+        allow update: if isOwner(userId) && isValidCartItem();
+        allow delete: if isOwner(userId);
+
+        // ✅ Validate cart item fields
+        function isValidCartItem() {
+          return request.resource.data.keys().hasAll(['productId', 'quantity']) &&
+                 request.resource.data.productId is string &&
+                 request.resource.data.quantity is int &&
+                 request.resource.data.quantity > 0;
+        }
+      }
+    }
+
+    // ✅ WISHLISTS Collection
+    match /wishlists/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+
+      // ✅ ITEMS Subcollection
+      match /items/{itemId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidWishlistItem();
+        allow update: if isOwner(userId) && isValidWishlistItem();
+        allow delete: if isOwner(userId);
+
+        // ✅ Validate wishlist item fields
+        function isValidWishlistItem() {
+          return request.resource.data.keys().hasAll(['productId']) &&
+                 request.resource.data.productId is string;
+        }
+      }
+    }
+
+    // ✅ ORDERS Collection
+    match /orders/{orderId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidOrder();
+      allow update: if (isOwner(resource.data.userId) || isAdmin()) && isValidOrderUpdate();
+      allow delete: if isAdmin();
+
+      // ✅ Validate order creation fields
+      function isValidOrder() {
+        return request.resource.data.keys().hasAll([
+          'userId', 'email', 'items', 'address', 'paymentMethod',
+          'subtotal', 'shipping', 'tax', 'total', 'status', 'createdAt'
+        ]) &&
+        request.resource.data.userId is string &&
+        request.resource.data.email is string &&
+        request.resource.data.items is list &&
+        request.resource.data.address is map &&
+        request.resource.data.paymentMethod is string &&
+        request.resource.data.subtotal is number &&
+        request.resource.data.shipping is number &&
+        request.resource.data.tax is number &&
+        request.resource.data.total is number &&
+        request.resource.data.status is string &&
+        request.resource.data.createdAt is timestamp;
+      }
+
+      // ✅ Validate order update fields
+      function isValidOrderUpdate() {
+        return request.resource.data.keys().hasAny([
+          'userId', 'email', 'items', 'address', 'paymentMethod',
+          'subtotal', 'shipping', 'tax', 'total', 'status',
+          'paymentId', 'paymentStatus', 'createdAt', 'updatedAt', 'notes'
+        ]) &&
+        (!('userId' in request.resource.data) || request.resource.data.userId == resource.data.userId) &&
+        (!('status' in request.resource.data) || request.resource.data.status is string) &&
+        (!('updatedAt' in request.resource.data) || request.resource.data.updatedAt is timestamp);
+      }
+    }
+
+    // ✅ PRODUCTS Collection
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidProduct();
+      allow update: if isAdmin() && isValidProduct();
+      allow delete: if isAdmin();
+
+      // ✅ Validate product fields
+      function isValidProduct() {
+        return request.resource.data.keys().hasAll(['name', 'price', 'description']) &&
+               request.resource.data.name is string &&
+               request.resource.data.price is number &&
+               request.resource.data.description is string;
+      }
+    }
+
+    // ✅ ORDER STATUS Collection (optional)
+    match /orderStatus/{orderId} {
+      allow read: if isSignedIn();
+      allow create: if isAdmin() && isValidOrderStatus();
+      allow update: if isAdmin() && isValidOrderStatus();
+      allow delete: if isAdmin();
+
+      // ✅ Validate order status fields
+      function isValidOrderStatus() {
+        return request.resource.data.keys().hasAll(['status']) &&
+               request.resource.data.status is string;
+      }
+    }
+  }
+}

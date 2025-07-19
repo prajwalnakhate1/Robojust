@@ -1,0 +1,79 @@
+.cart-container {
+  @apply max-w-4xl mx-auto p-6;
+}
+
+.cart-title {
+  @apply text-3xl font-bold mb-6;
+}
+
+.cart-items {
+  @apply space-y-6;
+}
+
+.cart-item {
+  @apply flex items-center justify-between border p-4 rounded;
+}
+
+.cart-item-info {
+  @apply flex items-center space-x-4;
+}
+
+.cart-item-image {
+  @apply w-20 h-20 object-contain;
+}
+
+.cart-item-name {
+  @apply font-semibold;
+}
+
+.cart-item-price {
+  @apply text-gray-600;
+}
+
+.cart-item-actions {
+  @apply flex items-center space-x-4;
+}
+
+.cart-qty-input {
+  @apply w-16 border rounded px-2 py-1 text-center;
+}
+
+.cart-remove-btn {
+  @apply text-red-600 hover:text-red-800;
+}
+
+.cart-item-total {
+  @apply font-semibold;
+}
+
+.cart-footer {
+  @apply mt-8 flex justify-between items-center border-t pt-6;
+}
+
+.cart-total {
+  @apply text-xl font-semibold;
+}
+
+.cart-footer-buttons {
+  @apply space-x-4;
+}
+
+.cart-clear-btn {
+  @apply px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700;
+}
+
+.cart-checkout-btn {
+  @apply px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700;
+}
+
+.cart-empty {
+  @apply max-w-4xl mx-auto p-6 text-center;
+}
+
+.cart-empty-title {
+  @apply text-2xl font-semibold mb-4;
+}
+
+.cart-empty-link {
+  @apply text-green-600 underline hover:text-green-800;
+}
