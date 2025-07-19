@@ -4,7 +4,8 @@ import { useCart } from "../../context/CartContext"; // ✅ correct path
 
 import { useWishlist } from '../../context/WishlistContext';
 
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
+
 import { toast } from 'react-toastify';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
