@@ -4,7 +4,7 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { toast } from 'react-toastify';
-import './products.css';
+import './Products.css';
 
 const Products = ({ products }) => {
   const navigate = useNavigate();
