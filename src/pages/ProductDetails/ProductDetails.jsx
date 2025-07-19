@@ -8,8 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 
 import { toast } from 'react-toastify';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-
+import { db } from '../../firebase';
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
