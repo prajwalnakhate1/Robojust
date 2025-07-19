@@ -5,7 +5,7 @@ import { useCart } from '../../context/CartContext';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { toast } from 'react-toastify';
-import logo from '../../assets/images/logo.PNG';
+import logo from '../../assets/images/logo.png';
 import './Navbar.css';
 
 const Navbar = () => {
