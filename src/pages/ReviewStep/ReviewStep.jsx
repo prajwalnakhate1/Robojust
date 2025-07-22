@@ -3,77 +3,71 @@ import { FiCheck, FiEdit2 } from 'react-icons/fi';
 import './ReviewStep.css';
 
 const ReviewStep = ({
-  cartItems,
+  cartItems = [],
   selectedAddress,
   paymentMethod,
-  orderNotes,
-  setOrderNotes,
-  subtotal,
-  shipping,
-  tax,
-  total,
+  subtotal = 0,
+  shipping = 0,
+  tax = 0,
+  total = 0,
   onPlaceOrder,
-  loading,
+  loading = false,
   onEditAddress,
   onEditPayment,
 }) => {
-  const itemCount = cartItems?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 0;
+  const itemCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
   return (
-    <div className="review-step-section py-6">
-      <h2 className="text-xl font-bold mb-6">Review Your Order</h2>
+    <section className="review-step-section">
+      <h2 className="text-2xl font-bold mb-6 text-center">🛒 Review Your Order</h2>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left Panel */}
-        <section className="md:col-span-2 space-y-6" aria-label="Order details">
+        <div className="md:col-span-2 space-y-6">
           {/* Shipping Address */}
-          <div className="border rounded-lg p-4 bg-white shadow-sm">
-            <div className="flex justify-between items-start mb-3">
-              <h3 className="font-medium text-lg">Shipping Address</h3>
+          <div className="info-card">
+            <div className="card-header flex justify-between items-center mb-3">
+              <h3 className="text-lg font-semibold">Shipping Address</h3>
               <button
-                type="button"
                 onClick={onEditAddress}
-                className="text-blue-600 hover:underline flex items-center focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-                aria-label="Change shipping address"
+                className="edit-button text-blue-600 hover:underline flex items-center gap-1"
               >
-                <FiEdit2 className="mr-1" />
+                <FiEdit2 className="edit-icon" />
                 Change
               </button>
             </div>
             {selectedAddress ? (
-              <address className="not-italic space-y-1">
+              <address className="address-details not-italic text-sm leading-6 text-gray-700">
                 <p>{selectedAddress.name}</p>
                 <p>{selectedAddress.street}</p>
                 <p>
                   {selectedAddress.city}, {selectedAddress.state} {selectedAddress.zip}
                 </p>
-                <p>Phone: {selectedAddress.phone}</p>
+                <p>📞 {selectedAddress.phone}</p>
                 {selectedAddress.isDefault && (
-                  <span className="inline-block mt-2 px-2 py-1 text-xs bg-green-100 text-green-800 rounded">
+                  <span className="inline-block mt-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-medium">
                     Default
                   </span>
                 )}
               </address>
             ) : (
-              <p className="text-red-500">No address selected.</p>
+              <p className="text-red-500 text-sm">No address selected.</p>
             )}
           </div>
 
           {/* Payment Method */}
-          <div className="border rounded-lg p-4 bg-white shadow-sm">
-            <div className="flex justify-between items-start mb-3">
-              <h3 className="font-medium text-lg">Payment Method</h3>
+          <div className="info-card">
+            <div className="card-header flex justify-between items-center mb-3">
+              <h3 className="text-lg font-semibold">Payment Method</h3>
               <button
-                type="button"
                 onClick={onEditPayment}
-                className="text-blue-600 hover:underline flex items-center focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-                aria-label="Change payment method"
+                className="edit-button text-blue-600 hover:underline flex items-center gap-1"
               >
-                <FiEdit2 className="mr-1" />
+                <FiEdit2 className="edit-icon" />
                 Change
               </button>
             </div>
-            <p className="capitalize">
+            <p className="text-sm text-gray-700">
               {paymentMethod === 'credit-card'
                 ? 'Credit/Debit Card'
                 : paymentMethod === 'razorpay'
@@ -83,52 +77,38 @@ const ReviewStep = ({
           </div>
 
           {/* Order Items */}
-          <div className="border rounded-lg p-4 bg-white shadow-sm">
-            <h3 className="font-medium mb-3 text-lg">Order Items</h3>
-            <div className="space-y-4 max-h-96 overflow-auto">
+          <div className="info-card">
+            <h3 className="text-lg font-semibold mb-4">Order Items</h3>
+            <div className="space-y-4">
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex justify-between items-center border-b pb-3 last:border-b-0"
+                  className="order-item flex justify-between items-center border-b pb-3"
                 >
-                  <div className="flex items-center space-x-4">
+                  <div className="item-info flex items-center gap-4">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-16 h-16 object-contain rounded bg-gray-50"
+                      className="w-16 h-16 object-contain rounded border"
                     />
                     <div>
-                      <p className="font-medium">{item.name}</p>
-                      <p className="text-sm text-gray-500">Qty: {item.quantity || 1}</p>
+                      <p className="font-medium text-sm">{item.name}</p>
+                      <p className="text-xs text-gray-500">Qty: {item.quantity || 1}</p>
                     </div>
                   </div>
-                  <p className="font-medium">₹{(item.price * (item.quantity || 1)).toFixed(2)}</p>
+                  <p className="font-semibold text-sm">
+                    ₹{(item.price * (item.quantity || 1)).toFixed(2)}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Order Notes */}
-          <div className="border rounded-lg p-4 bg-white shadow-sm">
-            <h3 className="font-medium mb-3 text-lg">Order Notes</h3>
-            <textarea
-              placeholder="Any special instructions?"
-              value={orderNotes}
-              onChange={(e) => setOrderNotes(e.target.value)}
-              rows={3}
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              aria-label="Order notes"
-            />
-          </div>
-        </section>
+        </div>
 
         {/* Right Panel - Order Summary */}
-        <aside
-          className="border rounded-lg p-4 bg-white shadow-md h-fit sticky top-4 order-summary"
-          aria-label="Order summary"
-        >
-          <h3 className="font-medium mb-4 text-lg">Order Summary</h3>
-          <div className="space-y-3">
+        <aside className="order-summary sticky top-4 bg-white p-6 rounded-lg shadow-md space-y-4">
+          <h3 className="text-lg font-semibold mb-2">🧾 Order Summary</h3>
+          <div className="space-y-2 text-sm text-gray-700">
             <div className="flex justify-between">
               <span>Subtotal ({itemCount} item{itemCount !== 1 ? 's' : ''})</span>
               <span>₹{subtotal.toFixed(2)}</span>
@@ -141,39 +121,36 @@ const ReviewStep = ({
               <span>Tax</span>
               <span>₹{tax.toFixed(2)}</span>
             </div>
-            <div className="border-t my-2"></div>
-            <div className="flex justify-between font-medium text-lg">
+            <hr className="border-t my-2" />
+            <div className="flex justify-between font-bold text-base">
               <span>Total</span>
               <span>₹{total.toFixed(2)}</span>
             </div>
           </div>
 
           <button
-            type="button"
             onClick={onPlaceOrder}
             disabled={loading}
-            className={`w-full mt-6 py-3 rounded-lg text-white font-medium flex items-center justify-center transition ${
-              loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            className={`w-full py-3 mt-4 rounded-md font-semibold text-white transition duration-300 ${
+              loading ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
             }`}
-            aria-disabled={loading}
-            aria-busy={loading}
           >
-            {loading ? (
-              'Processing...'
-            ) : (
-              <>
-                <FiCheck className="mr-2" />
+            {loading ? 'Processing...' : (
+              <span className="flex items-center justify-center gap-2">
+                <FiCheck className="text-white" />
                 Place Order
-              </>
+              </span>
             )}
           </button>
 
-          <p className="text-xs text-gray-500 mt-4">
-            By placing your order, you agree to VoltX&apos;s Terms of Service and Privacy Policy.
+          <p className="text-xs text-center text-gray-500 mt-3">
+            By placing your order, you agree to Robojust’s{' '}
+            <a href="/terms" className="text-blue-600 underline">Terms</a> &
+            <a href="/privacy" className="text-blue-600 underline ml-1">Privacy Policy</a>.
           </p>
         </aside>
       </div>
-    </div>
+    </section>
   );
 };
 

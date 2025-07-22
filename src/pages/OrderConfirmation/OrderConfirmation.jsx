@@ -22,7 +22,7 @@ const OrderConfirmation = ({ orderId, paymentMethod, total }) => {
           </div>
           <div>
             <span className="font-semibold">Total Paid:</span>{' '}
-            <span className="text-gray-800">${total?.toFixed(2)}</span>
+            <span className="text-gray-800">₹{total?.toFixed(2)}</span>
           </div>
         </div>
 

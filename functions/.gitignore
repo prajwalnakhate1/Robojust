@@ -1,0 +1,6 @@
+node_modules
+dist
+.vscode
+.env
+firebase-debug.log
+pglite-debug.log

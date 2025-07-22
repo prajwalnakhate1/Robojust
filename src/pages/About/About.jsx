@@ -1,89 +1,137 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { FiArrowRight, FiTrendingUp, FiLayers, FiAward } from 'react-icons/fi';
 import './About.css';
 
 const About = () => {
+  const features = [
+    {
+      icon: <FiTrendingUp className="feature-icon" />,
+      title: "Progressive Approach",
+      content: "We stay ahead of industry trends to deliver future-proof solutions",
+      color: "bg-gradient-to-br from-teal-500 to-emerald-600"
+    },
+    {
+      icon: <FiLayers className="feature-icon" />,
+      title: "Full-Cycle Development",
+      content: "From concept to deployment and beyond - we handle it all",
+      color: "bg-gradient-to-br from-blue-500 to-indigo-600"
+    },
+    {
+      icon: <FiAward className="feature-icon" />,
+      title: "Quality Assurance",
+      content: "Rigorous testing protocols ensure flawless performance",
+      color: "bg-gradient-to-br from-purple-500 to-violet-600"
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center space-y-6">
-          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl">
-            About <span className="text-indigo-600">Voltx</span> Technologies
+    <div className="about-container">
+      {/* Hero Section */}
+      <section className="about-hero">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="hero-content"
+        >
+          <h1 className="hero-title">
+            About <span className="text-gradient">Robojust</span>
           </h1>
-          <p className="max-w-2xl mx-auto text-xl text-gray-600 leading-relaxed">
-            Empowering businesses with cutting-edge technology solutions tailored for tomorrow's challenges.
+          <p className="hero-subtitle">
+            We transform complex challenges into elegant digital solutions through innovative technology and strategic thinking.
           </p>
-        </div>
+        </motion.div>
+        <div className="hero-pattern"></div>
+      </section>
 
-        <div className="mt-20 space-y-8">
-          {/* Our Story */}
-          <div className="about-card">
-            <div className="about-card-header">
-              <h3 className="about-card-title">Our Story</h3>
-            </div>
-            <div className="p-6">
-              <div className="prose prose-lg text-gray-700">
-                <p className="mb-4">
-                  Founded in 2020, Voltx Technologies has been at the forefront of digital transformation, 
-                  helping businesses leverage technology to solve complex challenges and drive sustainable growth.
-                </p>
-                <p className="mb-4">
-                  Our team of experienced developers, designers, and strategists collaborate to deliver 
-                  innovative solutions that are precisely tailored to your unique business requirements.
-                </p>
-                <p>
-                  We pride ourselves on building lasting partnerships with our clients by consistently delivering 
-                  exceptional value through our products and services.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Our Mission */}
-          <div className="about-card">
-            <div className="about-card-header">
-              <h3 className="about-card-title">Our Mission</h3>
-            </div>
-            <div className="p-6">
-              <div className="prose prose-lg text-gray-700">
-                <p>
-                  To democratize technology by empowering businesses of all sizes with affordable, scalable, 
-                  and reliable solutions that drive operational efficiency, foster innovation, and accelerate growth.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Our Team */}
-          <div className="about-card">
-            <div className="about-card-header">
-              <h3 className="about-card-title">Our Team</h3>
-            </div>
-            <div className="p-6">
-              <div className="prose prose-lg text-gray-700">
-                <p className="mb-4">
-                  We're a diverse collective of passionate technologists with deep expertise across web and mobile development, 
-                  cloud architecture, AI/ML, and emerging technologies.
-                </p>
-                <p>
-                  Our human-centered, collaborative approach ensures we deliver solutions that not only meet technical 
-                  requirements but also create meaningful impact for our clients and their customers.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Call to Action */}
-        <div className="mt-16 text-center">
-          <h2 className="text-2xl font-semibold text-gray-800">Ready to transform your business?</h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Let's discuss how Voltx Technologies can help you achieve your goals.
+      {/* Core Features */}
+      <section className="features-section">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="section-header"
+        >
+          <h2 className="section-title">Our Methodology</h2>
+          <p className="section-description">
+            A proven framework that delivers exceptional results
           </p>
-          <button className="about-cta-button mt-6">
-            Contact Us
-          </button>
+        </motion.div>
+
+        <div className="features-grid">
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.15, duration: 0.6 }}
+              viewport={{ once: true }}
+              className={`feature-card ${feature.color}`}
+            >
+              <div className="feature-icon-container">
+                {feature.icon}
+              </div>
+              <h3 className="feature-title">{feature.title}</h3>
+              <p className="feature-content">{feature.content}</p>
+            </motion.div>
+          ))}
         </div>
-      </div>
+      </section>
+
+      {/* Story Section */}
+      <section className="story-section">
+        <div className="story-content">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="story-text"
+          >
+            <h2 className="story-title">Our Journey</h2>
+            <p className="story-paragraph">
+              Founded in 2020, Robojust began as a small team of passionate technologists with a shared vision: to build digital solutions that make a real impact.
+            </p>
+            <p className="story-paragraph">
+              Today, we've grown into a full-service technology partner for businesses worldwide, but we've never lost our commitment to personalized service and technical excellence.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="story-visual"
+          >
+            <div className="visual-element"></div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="cta-section">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="cta-container"
+        >
+          <h2 className="cta-title">Ready to Build Something Remarkable?</h2>
+          <p className="cta-description">
+            Let's discuss how we can bring your vision to life with our technical expertise.
+          </p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="cta-button"
+          >
+            Start Your Project <FiArrowRight className="button-icon" />
+          </motion.button>
+        </motion.div>
+      </section>
     </div>
   );
 };

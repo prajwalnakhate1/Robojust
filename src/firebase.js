@@ -1,4 +1,5 @@
 // src/firebase.js
+
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
@@ -7,8 +8,9 @@ import {
   doc,
   setDoc,
 } from "firebase/firestore";
-import { getStorage } from "firebase/storage"; // ✅ Add this line
+import { getStorage } from "firebase/storage"; // ✅ For file uploads, images, etc.
 
+// 🔐 Firebase config (safe for frontend use)
 const firebaseConfig = {
   apiKey: "AIzaSyAHnzFBq49KOJlsixDdOAJEATo-kWqwPmw",
   authDomain: "ecommerce-site-2bfbe.firebaseapp.com",
@@ -19,44 +21,45 @@ const firebaseConfig = {
   measurementId: "G-09XSK8DBN6",
 };
 
-// Initialize Firebase
+// ✅ Initialize Firebase services
 let app, auth, db, storage;
 
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  storage = getStorage(app); // ✅ Initialize storage
+  storage = getStorage(app);
 
+  // ✅ Enable offline persistence for Firestore
   enableIndexedDbPersistence(db)
     .then(() => {
-      console.log("Offline persistence enabled");
+      console.log("✅ Offline persistence enabled");
     })
     .catch((err) => {
       if (err.code === "failed-precondition") {
-        console.warn("Persistence only works in one tab.");
+        console.warn("⚠️ Persistence only works in one tab at a time.");
       } else if (err.code === "unimplemented") {
-        console.warn("Browser does not support IndexedDB.");
+        console.warn("⚠️ IndexedDB is not supported in this browser.");
       }
     });
 
-  console.log("Firebase initialized successfully");
+  console.log("✅ Firebase initialized successfully");
 } catch (error) {
-  console.error("Firebase initialization error:", error);
+  console.error("❌ Firebase initialization error:", error);
 }
 
-// Test Firestore connection
+// ✅ Firestore Connection Test
 export async function testFirestoreConnection() {
   try {
     const testDocRef = doc(db, "_test_connection", "test");
     await setDoc(testDocRef, { timestamp: new Date() });
-    console.log("Firestore connection test successful");
+    console.log("✅ Firestore connection test successful");
     return true;
   } catch (error) {
-    console.error("Firestore connection test failed:", error);
+    console.error("❌ Firestore connection test failed:", error);
     return false;
   }
 }
 
-// ✅ Export storage
-export { app, auth, db, storage };    
+// ✅ Export Firebase services for use in your app
+export { app, auth, db, storage };
