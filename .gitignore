@@ -46,3 +46,4 @@ out/
 .env.*
 firestore-init/*.json
 firestore-init/*.json
+.vercel

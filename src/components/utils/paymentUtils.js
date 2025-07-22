@@ -1,9 +1,6 @@
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../../firebase'; // Adjust path if needed
-
 /**
- * Load Razorpay SDK dynamically into the browser.
- * @returns {Promise<boolean>} Resolves true if SDK loaded successfully, else false.
+ * Dynamically load the Razorpay SDK into the browser.
+ * @returns {Promise<boolean>} Resolves to true if loaded successfully.
  */
 export const loadRazorpay = () => {
   return new Promise((resolve) => {
@@ -31,45 +28,42 @@ export const loadRazorpay = () => {
 };
 
 /**
- * Create Razorpay order by calling backend API.
- * @param {number} amount - Amount in INR (e.g., 500 for ₹500)
- * @returns {Promise<object>} API response containing order info or error
+ * Call the backend API to create a Razorpay order.
+ * @param {number} amount - Amount in ₹ (e.g., 500 for ₹500)
+ * @returns {Promise<object>} - Response from API
  */
 export const createRazorpayOrder = async (amount) => {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/create-razorpay-order`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: Math.round(amount * 100) }), // convert ₹ to paise
+      body: JSON.stringify({ amount: Math.round(amount * 100) }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to create Razorpay order: ${response.statusText}`);
-    }
-
     const data = await response.json();
-    return data; // { success: true, order: {...} }
+    if (!response.ok) throw new Error(data.message || 'Failed to create order');
+    return data;
   } catch (error) {
-    console.error('❌ Razorpay order creation error:', error.message);
+    console.error('❌ Razorpay order creation failed:', error.message);
     return { success: false, error: error.message };
   }
 };
 
 /**
- * Initiate Razorpay payment popup.
- * @param {object} orderDetails - Contains amount, razorpayOrderId, customer info, etc.
- * @param {function} onSuccess - Callback on payment success
- * @param {function} onFailure - Callback on payment failure
+ * Open Razorpay popup and handle payment flow.
+ * @param {object} orderDetails - { amount, razorpayOrderId, customerName, customerEmail, customerPhone, orderId }
+ * @param {function} onSuccess - Callback on success
+ * @param {function} onFailure - Callback on failure
  */
 export const initiateRazorpayPayment = (orderDetails, onSuccess, onFailure) => {
   if (typeof window === 'undefined' || !window.Razorpay) {
-    alert('❌ Razorpay SDK is not loaded.');
+    alert('❌ Razorpay SDK not loaded');
     return;
   }
 
-  const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || process.env.REACT_APP_RAZORPAY_KEY;
+  const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY;
   if (!razorpayKey) {
-    console.error('⚠️ Razorpay API key missing.');
+    console.error('⚠️ Razorpay key not set');
     alert('Payment configuration error. Contact support.');
     return;
   }
@@ -94,24 +88,22 @@ export const initiateRazorpayPayment = (orderDetails, onSuccess, onFailure) => {
       orderId: orderDetails.orderId || '',
       customNote: orderDetails.notes || '',
     },
-    theme: {
-      color: '#2D89FF',
-    },
+    theme: { color: '#2D89FF' },
   };
 
   const rzp = new window.Razorpay(options);
   rzp.open();
 
-  rzp.on('payment.failed', function (response) {
+  rzp.on('payment.failed', (response) => {
     if (onFailure) onFailure(response.error);
-    console.error('❌ Razorpay payment failed:', response.error);
+    console.error('❌ Payment Failed:', response.error);
   });
 };
 
 /**
- * Verify Razorpay payment by calling backend API.
+ * Verify Razorpay payment with your backend.
  * @param {object} paymentData - { razorpay_payment_id, razorpay_order_id, razorpay_signature }
- * @returns {Promise<object>} Verification response from backend
+ * @returns {Promise<object>} - API response
  */
 export const verifyPayment = async (paymentData) => {
   try {
@@ -121,35 +113,11 @@ export const verifyPayment = async (paymentData) => {
       body: JSON.stringify(paymentData),
     });
 
-    if (!response.ok) {
-      throw new Error(`Payment verification failed: ${response.statusText}`);
-    }
-
     const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Verification failed');
     return data;
   } catch (error) {
-    console.error('❌ Razorpay payment verification error:', error.message);
+    console.error('❌ Payment verification error:', error.message);
     return { success: false, error: error.message };
-  }
-};
-
-/**
- * Save order details to Firestore.
- * @param {string} orderId - Your order ID (can be razorpay_order_id)
- * @param {object} orderData - Order/payment details to save
- * @returns {Promise<boolean>} True if saved successfully, else false
- */
-export const saveOrderToFirestore = async (orderId, orderData) => {
-  try {
-    const orderRef = doc(db, 'orders', orderId);
-    await setDoc(orderRef, {
-      ...orderData,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-    return true;
-  } catch (error) {
-    console.error('❌ Error saving order to Firestore:', error.message);
-    return false;
   }
 };
