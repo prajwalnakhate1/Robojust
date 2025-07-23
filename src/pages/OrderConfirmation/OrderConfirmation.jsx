@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './OrderConfirmation.css'; // Optional: Add this for custom styles
+import './OrderConfirmation.css';
+import { sendInvoiceViaWhatsApp } from '../../components/utils/whatsappUtils'; // Optional
 
-const OrderConfirmation = ({ orderId, paymentMethod, total }) => {
+const OrderConfirmation = ({ orderId, paymentMethod, total, invoiceURL, user }) => {
+  useEffect(() => {
+    if (invoiceURL && user?.phoneNumber) {
+      sendInvoiceViaWhatsApp({
+        phone: user.phoneNumber, // Example: '919876543210'
+        amount: total * 100, // Razorpay gives in paise
+        invoiceURL: invoiceURL,
+        name: user.displayName || user.email,
+      });
+    }
+  }, [invoiceURL, user, total]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10 fade-in">
       <div className="bg-white shadow-lg rounded-lg max-w-lg w-full p-8 text-center animate-slideIn">
@@ -24,10 +36,23 @@ const OrderConfirmation = ({ orderId, paymentMethod, total }) => {
             <span className="font-semibold">Total Paid:</span>{' '}
             <span className="text-gray-800">₹{total?.toFixed(2)}</span>
           </div>
+          {invoiceURL && (
+            <div>
+              <span className="font-semibold">Invoice:</span>{' '}
+              <a
+                href={invoiceURL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline ml-1"
+              >
+                Download Invoice (PDF)
+              </a>
+            </div>
+          )}
         </div>
 
         <div className="text-sm sm:text-base text-gray-600 mb-6">
-          We've sent a confirmation email with your order details.
+          We’ve sent a confirmation email with your order details.
           <br />
           Your order will be processed and shipped within{' '}
           <span className="font-medium">1–2 business days</span>.
