@@ -1,24 +1,32 @@
 {
+  "version": 2,
   "routes": [
     {
-      "src": "/privacy",
-      "dest": "/index.html",
-      "status": 200
+      "src": "/site.webmanifest",
+      "headers": {
+        "Content-Type": "application/manifest+json"
+      }
     },
     {
-      "src": "/terms",
-      "dest": "/index.html",
-      "status": 200
-    },
-    {
-      "src": "/cookies",
-      "dest": "/index.html",
-      "status": 200
+      "src": "/src/.*",
+      "headers": {
+        "Content-Type": "text/javascript"
+      }
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html",
-      "status": 200
+      "dest": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*).js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/javascript"
+        }
+      ]
     }
   ]
 }

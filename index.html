@@ -16,34 +16,90 @@
     <meta property="og:image" content="https://www.robojust.com/assets/og-image.png" />
     <meta property="og:url" content="https://www.robojust.com" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Robojust" />
 
     <!-- ✅ Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Robojust – Robotics & Electronics Store" />
     <meta name="twitter:description" content="Affordable electronics and robotics components online in India." />
     <meta name="twitter:image" content="https://www.robojust.com/assets/og-image.png" />
+    <meta name="twitter:site" content="@robojust" />
 
-    <!-- ✅ Favicons for browser + Google Search -->
+    <!-- ✅ Favicons and PWA Manifest -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="manifest" href="/site.webmanifest" crossorigin="use-credentials" />
+    <meta name="theme-color" content="#ffffff" />
 
     <!-- ✅ Canonical URL -->
     <link rel="canonical" href="https://www.robojust.com" />
 
-    <!-- ✅ Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQZLE9YB8X"></script>
+    <!-- ✅ Preconnect and Preload -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- ✅ Google Analytics with Fallback -->
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
+      function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-ZQZLE9YB8X');
+      
+      // Fallback if Google Analytics fails to load
+      setTimeout(function(){
+        if(typeof ga === 'undefined') {
+          console.log('Loading fallback analytics');
+          var script = document.createElement('script');
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-ZQZLE9YB8X';
+          script.async = true;
+          document.head.appendChild(script);
+        }
+      }, 3000);
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQZLE9YB8X"></script>
+
+    <!-- ✅ Module Loading Fallback -->
+    <script>
+      window.addEventListener('error', function(e) {
+        if (e.target.tagName === 'SCRIPT' && e.target.type === 'module') {
+          e.preventDefault();
+          console.warn('Module loading failed, falling back to standard script');
+          var script = document.createElement('script');
+          script.src = e.target.src.replace('.jsx', '.js');
+          script.type = 'text/javascript';
+          document.head.appendChild(script);
+        }
+      });
     </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- ✅ Main App Script with Fallback -->
+    <script type="module" src="/src/main.jsx" crossorigin></script>
+    <script nomodule>
+      document.getElementById('root').innerHTML = `
+        <div style="padding: 2rem; text-align: center; font-family: sans-serif;">
+          <h1>Browser Compatibility Issue</h1>
+          <p>Your browser doesn't support modern JavaScript features required by Robojust.</p>
+          <p>Please update to the latest version of Chrome, Firefox, Edge, or Safari.</p>
+          <div style="margin-top: 2rem;">
+            <a href="https://www.google.com/chrome/" style="margin: 0 1rem;">Download Chrome</a>
+            <a href="https://www.mozilla.org/firefox/" style="margin: 0 1rem;">Download Firefox</a>
+          </div>
+        </div>
+      `;
+    </script>
+    
+    <!-- ✅ Loading Animation -->
+    <noscript>
+      <div style="padding: 2rem; text-align: center; font-family: sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>Robojust requires JavaScript to function properly. Please enable JavaScript in your browser settings.</p>
+      </div>
+    </noscript>
   </body>
 </html>
