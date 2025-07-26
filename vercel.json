@@ -1,0 +1,24 @@
+{
+  "routes": [
+    {
+      "src": "/privacy",
+      "dest": "/index.html",
+      "status": 200
+    },
+    {
+      "src": "/terms",
+      "dest": "/index.html",
+      "status": 200
+    },
+    {
+      "src": "/cookies",
+      "dest": "/index.html",
+      "status": 200
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html",
+      "status": 200
+    }
+  ]
+}

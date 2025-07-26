@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // Context Providers
 import { AuthProvider } from './context/AuthContext';
@@ -15,7 +16,7 @@ import LoadingSpinner from './components/ui/LoadingSpinner';
 import ScrollToTop from './components/utils/ScrollToTop';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
-// Lazy-loaded Pages
+// Lazy-loaded Pages with explicit error handling
 const Home = lazy(() => import('./pages/Home/Home'));
 const About = lazy(() => import('./pages/About/About'));
 const Products = lazy(() => import('./pages/Products/Products'));
@@ -35,10 +36,47 @@ const Gallery = lazy(() => import('./pages/Gallery/Gallery'));
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'));
 const AddressStep = lazy(() => import('./pages/AddressStep/AddressStep'));
 
-// Legal Pages
-const PrivacyPolicy = lazy(() => import('./pages/LegalPages/PrivacyPolicy/PrivacyPolicy'));
-const TermsOfService = lazy(() => import('./pages/LegalPages/TermsOfService/TermsOfService'));
-const CookiePolicy = lazy(() => import('./pages/LegalPages/CookiePolicy/CookiePolicy'));
+// Legal Pages with enhanced error handling and preloading
+const PrivacyPolicy = lazy(() => 
+  import('./pages/LegalPages/PrivacyPolicy/PrivacyPolicy')
+    .then(module => ({ default: module.default }))
+    .catch(() => ({ default: () => <div>Error loading Privacy Policy</div> }))
+);
+
+const TermsOfService = lazy(() => 
+  import('./pages/LegalPages/TermsOfService/TermsOfService')
+    .then(module => ({ default: module.default }))
+    .catch(() => ({ default: () => <div>Error loading Terms of Service</div> }))
+);
+
+const CookiePolicy = lazy(() => 
+  import('./pages/LegalPages/CookiePolicy/CookiePolicy')
+    .then(module => ({ default: module.default }))
+    .catch(() => ({ default: () => <div>Error loading Cookie Policy</div> }))
+);
+
+// Error Boundary component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || <div>Something went wrong.</div>;
+    }
+    return this.props.children;
+  }
+}
 
 function App() {
   return (
@@ -65,10 +103,31 @@ function App() {
                     <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
                     <Route path="/gallery" element={<Gallery />} />
                     
-                    {/* Legal Pages */}
-                    <Route path="/privacy" element={<PrivacyPolicy />} />
-                    <Route path="/terms" element={<TermsOfService />} />
-                    <Route path="/cookies" element={<CookiePolicy />} />
+                    {/* Legal Pages with Error Boundaries */}
+                    <Route 
+                      path="/privacy" 
+                      element={
+                        <ErrorBoundary fallback={<div>Error loading Privacy Policy</div>}>
+                          <PrivacyPolicy />
+                        </ErrorBoundary>
+                      } 
+                    />
+                    <Route 
+                      path="/terms" 
+                      element={
+                        <ErrorBoundary fallback={<div>Error loading Terms of Service</div>}>
+                          <TermsOfService />
+                        </ErrorBoundary>
+                      } 
+                    />
+                    <Route 
+                      path="/cookies" 
+                      element={
+                        <ErrorBoundary fallback={<div>Error loading Cookie Policy</div>}>
+                          <CookiePolicy />
+                        </ErrorBoundary>
+                      } 
+                    />
 
                     {/* Protected Routes */}
                     <Route
@@ -138,6 +197,7 @@ function App() {
                 pauseOnHover
                 theme="colored"
               />
+              <SpeedInsights />
             </div>
           </Router>
         </WishlistProvider>
