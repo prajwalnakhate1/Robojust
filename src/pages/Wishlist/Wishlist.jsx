@@ -1,26 +1,36 @@
+// Remove ALL of these lines:
+// import { useState } from 'react';
+// Remove the first import line completely and keep only this:
+
+// Keep ONLY this import line:
 import React, { useState } from 'react';
 import { useWishlist } from '../../context/WishlistContext';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaHeart } from 'react-icons/fa';
 import './Wishlist.css';
 
+// Rest of your component code...
+
 const Wishlist = () => {
-  const { wishlistItems, removeFromWishlist, loading } = useWishlist();
+  const { 
+    wishlistItems, 
+    removeFromWishlist, 
+    loading 
+  } = useWishlist();
+  
   const { user } = useAuth();
   const navigate = useNavigate();
   const [animatingHearts, setAnimatingHearts] = useState({});
 
   const handleRemoveItem = (productId) => {
-    // Trigger animation before removal
-    setAnimatingHearts(prev => ({ ...prev, [productId]: true }));
+    if (loading) return;
     
+    setAnimatingHearts(prev => ({ ...prev, [productId]: true }));
     setTimeout(() => {
       removeFromWishlist(productId);
-      toast.success('Item removed from wishlist');
       setAnimatingHearts(prev => ({ ...prev, [productId]: false }));
-    }, 800); // Match this with your CSS animation duration
+    }, 800);
   };
 
   if (!user) {
@@ -30,10 +40,16 @@ const Wishlist = () => {
           <h2>Wishlist is Empty</h2>
           <p>You need to be logged in to view your wishlist.</p>
           <div className="wishlist-auth-buttons">
-            <button onClick={() => navigate('/login')} className="wishlist-empty-state-btn">
+            <button 
+              onClick={() => navigate('/login')} 
+              className="wishlist-empty-state-btn"
+            >
               Login
             </button>
-            <button onClick={() => navigate('/register')} className="wishlist-empty-state-btn">
+            <button 
+              onClick={() => navigate('/register')} 
+              className="wishlist-empty-state-btn"
+            >
               Create Account
             </button>
           </div>
@@ -78,6 +94,7 @@ const Wishlist = () => {
                 <button
                   className={`wishlist-heart-btn ${animatingHearts[item.id] ? 'animating' : ''}`}
                   onClick={() => handleRemoveItem(item.id)}
+                  disabled={loading}
                   aria-label="Remove from wishlist"
                 >
                   <FaHeart className="wishlist-heart-icon" />
@@ -97,13 +114,14 @@ const Wishlist = () => {
                         {item.name}
                       </Link>
                     </h4>
-                    <p className="wishlist-price">${item.price?.toFixed(2) || '0.00'}</p>
+                    <p className="wishlist-price">₹{(item.price * 75).toFixed(2)}</p>
                   </div>
                   <div className="wishlist-bottom">
                     <p className="wishlist-category">{item.category || 'General'}</p>
                     <div className="wishlist-actions">
                       <button 
                         onClick={() => handleRemoveItem(item.id)}
+                        disabled={loading}
                         className="wishlist-remove-btn"
                       >
                         Remove
@@ -126,4 +144,4 @@ const Wishlist = () => {
   );
 };
 
-export default Wishlist;
+export default React.memo(Wishlist);

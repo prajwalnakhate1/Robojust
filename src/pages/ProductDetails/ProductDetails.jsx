@@ -1,14 +1,19 @@
+// Remove ALL of these lines:
+// import { useState, useEffect } from 'react';
+// Remove the first import line completely and keep only this:
+
+// Keep ONLY this import line:
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useCart } from "../../context/CartContext"; // ✅ correct path
-
+import { useCart } from "../../context/CartContext";
 import { useWishlist } from '../../context/WishlistContext';
-
 import { useAuth } from '../../context/AuthContext';
-
 import { toast } from 'react-toastify';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../../firebase';  // Corrected import path
+
+
+// Rest of your component code...
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -82,10 +87,10 @@ const ProductDetails = () => {
     const isWished = wishlistItems.some((item) => item.id === id);
     if (isWished) {
       removeFromWishlist(id);
-      toast.success('Removed from wishlist');
+      // Notification is now handled by WishlistContext
     } else {
       addToWishlist({ ...product, id });
-      toast.success('Added to wishlist');
+      // Notification is now handled by WishlistContext
     }
   };
 

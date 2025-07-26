@@ -1,13 +1,7 @@
-// src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import {
-  getFirestore,
-  enableIndexedDbPersistence,
-  doc,
-  setDoc,
-} from "firebase/firestore";
-import { getStorage } from "firebase/storage"; // ✅ Add this line
+import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAHnzFBq49KOJlsixDdOAJEATo-kWqwPmw",
@@ -16,47 +10,36 @@ const firebaseConfig = {
   storageBucket: "ecommerce-site-2bfbe.appspot.com",
   messagingSenderId: "1078965716895",
   appId: "1:1078965716895:web:5d371acf3b6bd1bd719faa",
-  measurementId: "G-09XSK8DBN6",
+  measurementId: "G-09XSK8DBN6"
 };
 
-// Initialize Firebase
-let app, auth, db, storage;
+// Initialize Firebase services
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  storage = getStorage(app); // ✅ Initialize storage
-
-  enableIndexedDbPersistence(db)
-    .then(() => {
-      console.log("Offline persistence enabled");
-    })
-    .catch((err) => {
-      if (err.code === "failed-precondition") {
-        console.warn("Persistence only works in one tab.");
-      } else if (err.code === "unimplemented") {
-        console.warn("Browser does not support IndexedDB.");
-      }
-    });
-
-  console.log("Firebase initialized successfully");
-} catch (error) {
-  console.error("Firebase initialization error:", error);
+// Enable offline persistence
+if (typeof window !== 'undefined') {
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('Offline persistence already enabled in another tab');
+    } else if (err.code === 'unimplemented') {
+      console.warn('Browser does not support offline persistence');
+    }
+  });
 }
 
-// Test Firestore connection
-export async function testFirestoreConnection() {
+export { app, auth, db, storage };
+
+// Connection test utility
+export const testFirestoreConnection = async () => {
   try {
-    const testDocRef = doc(db, "_test_connection", "test");
-    await setDoc(testDocRef, { timestamp: new Date() });
-    console.log("Firestore connection test successful");
+    const testRef = doc(db, '_connections', 'test');
+    await setDoc(testRef, { timestamp: new Date() });
     return true;
   } catch (error) {
-    console.error("Firestore connection test failed:", error);
+    console.error('Firestore connection failed:', error);
     return false;
   }
-}
-
-// ✅ Export storage
-export { app, auth, db, storage };    
+};

@@ -1,0 +1,8 @@
+/* Additional specific styles for Terms of Service */
+.legal-content ol {
+  list-style-type: decimal;
+}
+
+.legal-content ol li {
+  margin-bottom: 0.8rem;
+}

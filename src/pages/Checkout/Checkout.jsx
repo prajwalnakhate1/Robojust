@@ -57,8 +57,8 @@ const Checkout = () => {
     (sum, item) => sum + item.price * (item.quantity || 1),
     0
   );
-  const shipping = 49;
-  const tax = subtotal * 0.1;
+  const shipping = 0;
+  const tax = subtotal * 0;
   const total = subtotal + shipping + tax;
 
   const stepLabels = ['Address', 'Payment', 'Review'];

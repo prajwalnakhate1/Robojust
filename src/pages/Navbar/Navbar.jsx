@@ -88,7 +88,7 @@ const Navbar = () => {
               e.target.src = 'https://via.placeholder.com/120x48?text=VoltX';
             }}
           />
-          <span className="logo-text">VoltX</span>
+          <span className="logo-text"></span>
         </Link>
 
         <div className="desktop-menu">

@@ -1,15 +1,165 @@
-.about-card {
-  @apply bg-white rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #4f46e5;
+  --primary-light: #6366f1;
+  --secondary: #10b981;
+  --dark: #1f2937;
+  --light: #f9fafb;
+  --gray: #6b7280;
 }
 
-.about-card-header {
-  @apply px-6 py-5 bg-gradient-to-r from-purple-600 to-indigo-600;
+.about-container {
+  font-family: 'Inter', sans-serif;
+  color: var(--dark);
+  overflow-x: hidden;
 }
 
-.about-card-title {
-  @apply text-xl font-semibold text-white;
+/* Hero Section */
+.about-hero {
+  @apply relative py-24 px-6 sm:px-8 lg:px-12;
+  background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
 }
 
-.about-cta-button {
-  @apply mt-6 px-8 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors;
+.hero-content {
+  @apply relative z-10 max-w-4xl mx-auto text-center;
+}
+
+.hero-title {
+  @apply text-4xl sm:text-5xl lg:text-6xl font-bold mb-6;
+  line-height: 1.2;
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-subtitle {
+  @apply text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto;
+}
+
+.hero-pattern {
+  @apply absolute inset-0 opacity-10;
+  background-image: radial-gradient(var(--primary) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Features Section */
+.features-section {
+  @apply py-20 px-6 sm:px-8 lg:px-12;
+}
+
+.section-header {
+  @apply max-w-3xl mx-auto text-center mb-16;
+}
+
+.section-title {
+  @apply text-3xl font-bold text-gray-900 mb-4;
+}
+
+.section-description {
+  @apply text-lg text-gray-600;
+}
+
+.features-grid {
+  @apply grid md:grid-cols-3 gap-8 max-w-6xl mx-auto;
+}
+
+.feature-card {
+  @apply p-8 rounded-xl text-white transition-all duration-300 hover:shadow-xl;
+}
+
+.feature-icon-container {
+  @apply w-14 h-14 rounded-full bg-white bg-opacity-20 flex items-center justify-center mb-6;
+}
+
+.feature-icon {
+  @apply text-2xl;
+}
+
+.feature-title {
+  @apply text-xl font-bold mb-4;
+}
+
+.feature-content {
+  @apply text-gray-100;
+}
+
+/* Story Section */
+.story-section {
+  @apply py-20 px-6 sm:px-8 lg:px-12 bg-gray-50;
+}
+
+.story-content {
+  @apply max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center;
+}
+
+.story-text {
+  @apply space-y-6;
+}
+
+.story-title {
+  @apply text-3xl font-bold text-gray-900;
+}
+
+.story-paragraph {
+  @apply text-gray-600 leading-relaxed;
+}
+
+.story-visual {
+  @apply relative h-80;
+}
+
+.visual-element {
+  @apply absolute inset-0 rounded-2xl bg-gradient-to-tr from-indigo-100 to-purple-100;
+  border: 1px solid rgba(79, 70, 229, 0.1);
+}
+
+/* CTA Section */
+.cta-section {
+  @apply py-24 px-6 sm:px-8 lg:px-12;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+.cta-container {
+  @apply max-w-4xl mx-auto text-center;
+}
+
+.cta-title {
+  @apply text-2xl sm:text-3xl font-bold text-white mb-4;
+}
+
+.cta-description {
+  @apply text-lg text-indigo-100 mb-8 max-w-2xl mx-auto;
+}
+
+.cta-button {
+  @apply px-8 py-3 bg-white text-indigo-600 font-medium rounded-lg flex items-center justify-center mx-auto;
+  transition: all 0.3s ease;
+}
+
+.button-icon {
+  @apply ml-2;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero-title {
+    @apply text-4xl;
+  }
+  
+  .features-grid {
+    @apply grid-cols-1;
+  }
+  
+  .story-content {
+    @apply grid-cols-1;
+  }
+  
+  .story-visual {
+    @apply h-64 order-first mb-8;
+  }
 }

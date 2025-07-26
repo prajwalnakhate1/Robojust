@@ -13,7 +13,6 @@ const Products = ({ products }) => {
   const { addToWishlist, wishlistItems, removeFromWishlist } = useWishlist();
   const [loading, setLoading] = useState(true);
 
-  // Optimize with useEffect for initial loading
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 300);
     return () => clearTimeout(timer);
@@ -24,55 +23,36 @@ const Products = ({ products }) => {
 
   const handleAddToCart = (product) => {
     if (!user) {
-      toast.warning('⚠️ Please login to add items to your cart.', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
+      toast.warning('⚠️ Please login to add items to your cart.');
       return navigate('/login');
     }
+
     if (isInCart(product.id)) {
-      toast.info('ℹ️ Item is already in your cart.', {
-        position: 'top-right',
-        autoClose: 2000,
-      });
+      toast.info('ℹ️ Item is already in your cart.');
     } else {
       addToCart(product);
-      toast.success(`✅ ${product.name} added to cart!`, {
-        position: 'top-right',
-        autoClose: 2000,
-      });
+      toast.success(`✅ ${product.name} added to cart!`);
     }
   };
 
   const handleWishlistAction = (product) => {
     if (!user) {
-      toast.warning('⚠️ Please login to manage your wishlist.', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
+      toast.warning('⚠️ Please login to manage your wishlist.');
       return navigate('/login');
     }
+
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id);
-      toast.info(`❤️ ${product.name} removed from wishlist!`, {
-        position: 'top-right',
-        autoClose: 2000,
-      });
+      toast.info(`❤️ ${product.name} removed from wishlist!`);
     } else {
       addToWishlist(product);
-      toast.success(`❤️ ${product.name} added to wishlist!`, {
-        position: 'top-right',
-        autoClose: 2000,
-      });
+      toast.success(`❤️ ${product.name} added to wishlist!`);
     }
   };
 
   const handleBuyNow = (product) => {
     if (!user) {
-      toast.warning('⚠️ Please login to buy items.', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
+      toast.warning('⚠️ Please login to buy items.');
       return navigate('/login', { state: { from: '/checkout' } });
     }
 
@@ -144,17 +124,14 @@ const Products = ({ products }) => {
                     className="product-image"
                     loading="lazy"
                     onError={(e) => {
-                      e.target.src = '/placeholder-image.jpg'; // Fallback image
+                      e.target.src = '/placeholder-image.jpg';
                     }}
                   />
                 </div>
 
                 <div className="product-info">
                   <span className="product-category">{product.category}</span>
-                  <h3
-                    id={`product-${product.id}-title`}
-                    className="product-name"
-                  >
+                  <h3 id={`product-${product.id}-title`} className="product-name">
                     {product.name}
                   </h3>
                   <p className="product-price">
@@ -164,11 +141,7 @@ const Products = ({ products }) => {
                     })}
                   </p>
                   <p className="product-sku">SKU: {product.sku || 'N/A'}</p>
-                  <p
-                    className="product-stock"
-                    aria-live="polite"
-                    aria-atomic="true"
-                  >
+                  <p className="product-stock">
                     {product.stock > 0 ? 'Available in Stock' : 'Out of Stock'}
                   </p>
 
@@ -176,7 +149,7 @@ const Products = ({ products }) => {
                     <button
                       onClick={() => handleAddToCart(product)}
                       className="add-to-cart-btn"
-                      enabled={product.stock === 0}
+                      disabled={product.stock === 0}
                       aria-label={`Add ${product.name} to cart`}
                     >
                       🛒 Add to Cart
@@ -184,7 +157,7 @@ const Products = ({ products }) => {
                     <button
                       onClick={() => handleBuyNow(product)}
                       className="buy-now-btn"
-                      enabled={product.stock === 0}
+                      disabled={product.stock === 0}
                       aria-label={`Buy ${product.name} now`}
                     >
                       ⚡ Buy Now
@@ -200,5 +173,4 @@ const Products = ({ products }) => {
   );
 };
 
-// Memoize to prevent unnecessary re-renders
 export default memo(Products);

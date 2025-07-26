@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useState, useEffect, useContext, createContext, useRef } from 'react';
+import { doc, getDoc, setDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './AuthContext';
+import { toast } from 'react-toastify';
 
 const WishlistContext = createContext();
 export const useWishlist = () => useContext(WishlistContext);
@@ -9,71 +10,109 @@ export const useWishlist = () => useContext(WishlistContext);
 export const WishlistProvider = ({ children }) => {
   const { user } = useAuth();
   const [wishlistItems, setWishlistItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const notificationLock = useRef(false);
 
-  // 🔄 Load wishlist from Firestore or localStorage
+  // Centralized notification control
+  const showWishlistNotification = (message, type = 'success') => {
+    if (notificationLock.current) return;
+    
+    notificationLock.current = true;
+    toast.dismiss('wishlist-notification');
+    
+    toast[type](message, {
+      toastId: 'wishlist-notification',
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      onClose: () => {
+        notificationLock.current = false;
+      }
+    });
+  };
+
+  // Load wishlist
   useEffect(() => {
     const loadWishlist = async () => {
-      if (user) {
-        const wishlistRef = doc(db, 'wishlists', user.uid);
-        try {
+      setLoading(true);
+      try {
+        if (user) {
+          const wishlistRef = doc(db, 'wishlists', user.uid);
           const snap = await getDoc(wishlistRef);
+          
           if (snap.exists()) {
             setWishlistItems(snap.data().items || []);
           } else {
-            const localItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
+            const localItems = JSON.parse(localStorage.getItem('wishlist')) || [];
             if (localItems.length > 0) {
-              setWishlistItems(localItems);
-              await setDoc(wishlistRef, { items: localItems }, { merge: true });
-              localStorage.removeItem('wishlistItems');
+              await setDoc(wishlistRef, { items: localItems });
+              localStorage.removeItem('wishlist');
             }
+            setWishlistItems(localItems);
           }
-        } catch (error) {
-          console.error('❌ Failed to load wishlist from Firestore:', error.message);
+        } else {
+          setWishlistItems(JSON.parse(localStorage.getItem('wishlist') || []));
         }
-      } else {
-        const localItems = JSON.parse(localStorage.getItem('wishlistItems') || '[]');
-        setWishlistItems(localItems);
+      } catch (error) {
+        console.error('Wishlist load error:', error);
+        showWishlistNotification('Failed to load wishlist', 'error');
+      } finally {
+        setLoading(false);
       }
     };
 
     loadWishlist();
   }, [user]);
 
-  // 💾 Save wishlist to Firestore or localStorage
+  // Save wishlist changes
   useEffect(() => {
     const saveWishlist = async () => {
       try {
         if (user) {
           const wishlistRef = doc(db, 'wishlists', user.uid);
-          await setDoc(wishlistRef, { items: wishlistItems }, { merge: true });
+          await setDoc(wishlistRef, { items: wishlistItems });
         }
-        localStorage.setItem('wishlistItems', JSON.stringify(wishlistItems));
+        localStorage.setItem('wishlist', JSON.stringify(wishlistItems));
       } catch (error) {
-        console.error('❌ Error saving wishlist:', error.message);
+        console.error('Wishlist save error:', error);
       }
     };
 
-    saveWishlist();
+    const timer = setTimeout(saveWishlist, 500);
+    return () => clearTimeout(timer);
   }, [wishlistItems, user]);
 
-  // ➕ Add to wishlist
-  const addToWishlist = (product) => {
-    setWishlistItems((prevItems) => {
-      const exists = prevItems.some((item) => item.id === product.id);
-      return exists ? prevItems : [...prevItems, product];
+  const addToWishlist = async (product) => {
+    if (!product.id || loading) return;
+
+    setWishlistItems(prev => {
+      const exists = prev.some(item => item.id === product.id);
+      if (exists) {
+        showWishlistNotification('Item already in wishlist', 'info');
+        return prev;
+      }
+      showWishlistNotification('Added to wishlist');
+      return [...prev, product];
     });
   };
 
-  // ❌ Remove from wishlist
-  const removeFromWishlist = (productId) => {
-    setWishlistItems((prevItems) =>
-      prevItems.filter((item) => item.id !== productId)
-    );
+  const removeFromWishlist = async (productId) => {
+    if (loading) return;
+
+    setWishlistItems(prev => {
+      const updated = prev.filter(item => item.id !== productId);
+      if (updated.length !== prev.length) {
+        showWishlistNotification('Removed from wishlist');
+      }
+      return updated;
+    });
   };
 
-  // ✅ Check if in wishlist
   const isInWishlist = (productId) => {
-    return wishlistItems.some((item) => item.id === productId);
+    return wishlistItems.some(item => item.id === productId);
   };
 
   return (
@@ -83,7 +122,7 @@ export const WishlistProvider = ({ children }) => {
         addToWishlist,
         removeFromWishlist,
         isInWishlist,
-        setWishlistItems,
+        loading
       }}
     >
       {children}

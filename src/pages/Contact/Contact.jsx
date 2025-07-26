@@ -9,7 +9,7 @@ const Contact = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl lg:text-6xl">
-            Contact <span className="text-blue-600">Voltx</span>
+            Contact <span className="text-blue-600">Robojust</span>
           </h1>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
             We'd love to hear from you! Whether you have a question, feedback, or a project in mind —
@@ -25,7 +25,7 @@ const Contact = () => {
             <div className="space-y-4 text-gray-700 text-base">
               <div className="contact-info-item">
                 <EnvelopeIcon className="h-6 w-6 text-blue-600" />
-                <span>voltxtechnologies@gmail.com</span>
+                <span>Robojustconnect@gmail.com</span>
               </div>
               <div className="contact-info-item">
                 <PhoneIcon className="h-6 w-6 text-blue-600" />
@@ -34,8 +34,9 @@ const Contact = () => {
               <div className="contact-info-item">
                 <MapPinIcon className="h-6 w-6 text-blue-600" />
                 <span>
-                  123 Tech Park, Innovation Road<br />
-                  Mumbai, Maharashtra 400001<br />
+                  Jalna<br />
+                  
+                
                   India
                 </span>
               </div>

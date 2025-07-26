@@ -10,7 +10,7 @@ import { WishlistProvider } from './context/WishlistContext';
 
 // Core Components
 import Navbar from './pages/Navbar/Navbar';
-import FooterSection from './pages/Footer/FooterSection';
+import FooterSection from './pages/Footer/Footer';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 import ScrollToTop from './components/utils/ScrollToTop';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -34,6 +34,11 @@ const OrderPage = lazy(() => import('./pages/OrderPage/OrderPage'));
 const Gallery = lazy(() => import('./pages/Gallery/Gallery'));
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'));
 const AddressStep = lazy(() => import('./pages/AddressStep/AddressStep'));
+
+// Legal Pages
+const PrivacyPolicy = lazy(() => import('./pages/LegalPages/PrivacyPolicy/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/LegalPages/TermsOfService/TermsOfService'));
+const CookiePolicy = lazy(() => import('./pages/LegalPages/CookiePolicy/CookiePolicy'));
 
 function App() {
   return (
@@ -59,6 +64,11 @@ function App() {
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
                     <Route path="/gallery" element={<Gallery />} />
+                    
+                    {/* Legal Pages */}
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/terms" element={<TermsOfService />} />
+                    <Route path="/cookies" element={<CookiePolicy />} />
 
                     {/* Protected Routes */}
                     <Route

@@ -1,0 +1,24 @@
+[
+  {
+    "file": "c:\\Users\\Hp\\Desktop\\VoltX Ecommerce (4)\\robo\\robo\\src\\components\\utils\\razorpay.js",
+    "message": "Type assertion expressions can only be used in TypeScript files.",
+    "line": 67,
+    "timestamp": "2025-07-25T09:08:04.412Z",
+    "solution": "",
+    "keep": true,
+    "resolved": false,
+    "tags": [],
+    "uniqueId": "mdilmb3wa0tun7be4yi"
+  },
+  {
+    "file": "c:\\Users\\Hp\\Desktop\\VoltX Ecommerce (4)\\robo\\robo\\src\\components\\utils\\razorpay.js",
+    "message": "Type annotations can only be used in TypeScript files.",
+    "line": 87,
+    "timestamp": "2025-07-25T09:08:05.036Z",
+    "solution": "",
+    "keep": true,
+    "resolved": false,
+    "tags": [],
+    "uniqueId": "mdilmbl82itoqhupntq"
+  }
+]

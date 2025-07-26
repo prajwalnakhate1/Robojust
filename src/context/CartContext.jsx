@@ -1,8 +1,8 @@
-// src/context/CartContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './AuthContext';
+import { toast } from 'react-toastify';
 
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
@@ -10,124 +10,244 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Format price as Indian Rupees
+  const formatPrice = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2
+    }).format(amount);
+  };
 
   // 🔄 Load cart on auth state change
   useEffect(() => {
     const loadCart = async () => {
-      if (user) {
-        const cartRef = doc(db, 'carts', user.uid);
-        try {
+      setLoading(true);
+      try {
+        if (user) {
+          const cartRef = doc(db, 'carts', user.uid);
           const snap = await getDoc(cartRef);
+          
           if (snap.exists()) {
-            const firestoreItems = snap.data().items || [];
-            setCartItems(firestoreItems);
+            setCartItems(snap.data().items || []);
           } else {
-            const localItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            const localItems = JSON.parse(localStorage.getItem('cart') || '[]');
             if (localItems.length > 0) {
               setCartItems(localItems);
-              await setDoc(cartRef, { items: localItems }, { merge: true });
-              localStorage.removeItem('cartItems');
+              await setDoc(cartRef, { items: localItems });
+              localStorage.removeItem('cart');
             }
           }
-        } catch (err) {
-          console.error('Failed to load cart from Firestore:', err.message);
+        } else {
+          const localItems = JSON.parse(localStorage.getItem('cart') || '[]');
+          setCartItems(localItems);
         }
-      } else {
-        const localItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-        setCartItems(localItems);
+      } catch (error) {
+        console.error('Cart load error:', error);
+        toast.error('Failed to load cart');
+      } finally {
+        setLoading(false);
       }
     };
+
     loadCart();
   }, [user]);
 
-  // 💾 Save cart to Firestore or localStorage
+  // 💾 Auto-save when cart changes
   useEffect(() => {
     const saveCart = async () => {
       try {
         if (user) {
           const cartRef = doc(db, 'carts', user.uid);
-          await setDoc(cartRef, { items: cartItems }, { merge: true });
+          await setDoc(cartRef, { items: cartItems });
         }
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        localStorage.setItem('cart', JSON.stringify(cartItems));
       } catch (error) {
-        console.error('Error saving cart:', error.message);
+        console.error('Cart save error:', error);
+        toast.error('Failed to sync cart');
       }
     };
-    saveCart();
+
+    const timer = setTimeout(saveCart, 500);
+    return () => clearTimeout(timer);
   }, [cartItems, user]);
 
   // ➕ Add item to cart
   const addToCart = (product) => {
+    if (!product.id) return;
+    
     if (product.stock <= 0) {
-      alert(`⚠️ ${product.name} is out of stock.`);
+      toast.error(`${product.name} is out of stock`);
       return;
     }
 
-    setCartItems((prev) => {
-      const exists = prev.find((item) => item.id === product.id);
+    setCartItems(prev => {
+      const exists = prev.find(item => item.id === product.id);
+      
       if (exists) {
         const newQty = exists.quantity + 1;
         if (newQty > product.stock) {
-          alert(`Only ${product.stock} items in stock for ${product.name}.`);
+          toast.error(`Only ${product.stock} items available`);
           return prev;
         }
-        return prev.map((item) =>
+        toast.success(`Increased ${product.name} quantity`);
+        return prev.map(item =>
           item.id === product.id ? { ...item, quantity: newQty } : item
         );
       }
 
+      toast.success(`${product.name} added to cart`);
       return [
         ...prev,
         {
-          id: product.id,
-          name: product.name,
-          price: Number(product.price),
+          ...product,
           quantity: 1,
-          image: product.image,
-          sku: product.sku || '',
-          stock: product.stock || 0,
-        },
+          price: Number(product.price)
+        }
       ];
     });
   };
 
-  // ❌ Remove item by ID
-  const removeFromCart = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  // 🔢 Update item quantity (for direct input)
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity < 1 || isNaN(newQuantity)) return;
+
+    setCartItems(prev => 
+      prev.map(item => {
+        if (item.id === productId) {
+          const quantity = Math.min(
+            Math.max(1, newQuantity), 
+            item.stock || 99
+          );
+          return { ...item, quantity };
+        }
+        return item;
+      })
+    );
   };
 
-  // 💰 Calculate total
-  const calculateTotal = () =>
-    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  // ➖ Decrease item quantity
+  const decreaseQuantity = (productId) => {
+    setCartItems(prev =>
+      prev.map(item =>
+        item.id === productId && item.quantity > 1
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      )
+    );
+  };
 
-  // 🧹 Clear cart
+  // ➕ Increase item quantity
+  const increaseQuantity = (productId) => {
+    setCartItems(prev =>
+      prev.map(item => {
+        if (item.id === productId) {
+          const newQty = item.quantity + 1;
+          const maxQty = item.stock || 99;
+          if (newQty > maxQty) {
+            toast.error(`Only ${maxQty} items available`);
+            return item;
+          }
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      })
+    );
+  };
+
+  // ❌ Remove item from cart
+  const removeFromCart = (id) => {
+    setCartItems(prev => {
+      const removedItem = prev.find(item => item.id === id);
+      if (removedItem) {
+        toast.success(`${removedItem.name} removed from cart`);
+      }
+      return prev.filter(item => item.id !== id);
+    });
+  };
+
+  // 💰 Calculate totals in INR
+  const calculateTotals = () => {
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const tax = subtotal * 0.18; // 18% GST
+    const shipping = subtotal > 1000 ? 0 : 99; // Free shipping over ₹1000
+    const total = subtotal + tax + shipping;
+
+    return {
+      raw: { subtotal, tax, shipping, total },
+      formatted: {
+        subtotal: formatPrice(subtotal),
+        tax: formatPrice(tax),
+        shipping: shipping === 0 ? 'FREE' : formatPrice(shipping),
+        total: formatPrice(total)
+      },
+      count: cartItems.reduce((sum, item) => sum + item.quantity, 0)
+    };
+  };
+
+  // 🧹 Clear cart completely
   const clearCart = async () => {
     setCartItems([]);
-    if (user) {
-      try {
+    try {
+      if (user) {
         const cartRef = doc(db, 'carts', user.uid);
-        await setDoc(cartRef, { items: [] }, { merge: true });
-      } catch (err) {
-        console.error('Error clearing Firestore cart:', err);
+        await setDoc(cartRef, { items: [] });
       }
+      localStorage.removeItem('cart');
+      toast.success('Cart cleared');
+    } catch (error) {
+      console.error('Error clearing cart:', error);
     }
-    localStorage.removeItem('cartItems');
+  };
+
+  // 🔄 Merge guest cart after login
+  const mergeGuestCart = async (guestItems) => {
+    if (!user || !guestItems.length) return;
+    
+    try {
+      const cartRef = doc(db, 'carts', user.uid);
+      const currentCart = await getDoc(cartRef);
+      const existingItems = currentCart.exists() ? currentCart.data().items : [];
+
+      const mergedItems = [...existingItems];
+      guestItems.forEach(guestItem => {
+        const existingIndex = mergedItems.findIndex(item => item.id === guestItem.id);
+        if (existingIndex >= 0) {
+          mergedItems[existingIndex].quantity = Math.max(
+            mergedItems[existingIndex].quantity,
+            guestItem.quantity
+          );
+        } else {
+          mergedItems.push(guestItem);
+        }
+      });
+
+      await setDoc(cartRef, { items: mergedItems });
+      setCartItems(mergedItems);
+    } catch (error) {
+      console.error('Cart merge error:', error);
+    }
   };
 
   return (
     <CartContext.Provider
       value={{
         cartItems,
-        setCartItems,
+        loading,
         addToCart,
+        decreaseQuantity,
+        increaseQuantity,
+        updateQuantity,
         removeFromCart,
-        calculateTotal,
+        calculateTotals,
         clearCart,
+        mergeGuestCart,
+        formatPrice
       }}
     >
       {children}
     </CartContext.Provider>
   );
 };
-
-export default CartProvider;
