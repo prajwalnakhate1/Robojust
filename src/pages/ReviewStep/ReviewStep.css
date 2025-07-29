@@ -7,14 +7,6 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Example: Gradient text compatibility */
-.gradient-title {
-  background: linear-gradient(to right, #1e293b, #3b82f6);
-  background-clip: text;              /* Standard property */
-  -webkit-background-clip: text;      /* Webkit prefix for compatibility */
-  -webkit-text-fill-color: transparent;
-}
-
 .review-step-title {
   font-size: 1.75rem;
   font-weight: 700;
@@ -435,8 +427,16 @@
     height: 3.5rem;
   }
 
-    .place-order-btn {
-      padding: 0.875rem;
-      font-size: 1rem;
-    }
+  .place-order-btn {
+    padding: 0.875rem;
+    font-size: 1rem;
   }
+}
+
+/* Gradient Text Compatibility */
+.gradient-title {
+  background: linear-gradient(to right, #1e293b, #3b82f6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

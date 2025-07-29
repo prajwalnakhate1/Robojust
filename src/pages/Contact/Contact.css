@@ -28,6 +28,11 @@
   letter-spacing: -0.025em;
   background: linear-gradient(to right, #1a202c, #2b6cb0);
   -webkit-background-clip: text;
+  background-clip: text;
+  background-clip: text;
+  background-clip: text;
+  background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   transition: transform 0.3s ease;
 }
@@ -38,7 +43,8 @@
 
 .text-blue-600 {
   background: linear-gradient(to right, #2b6cb0, #3182ce);
-  -webkit-background-clip: text;
+  background-clip: text;              /* Standard property */
+  -webkit-background-clip: text;      /* Webkit prefix for compatibility */
   -webkit-text-fill-color: transparent;
 }
 
