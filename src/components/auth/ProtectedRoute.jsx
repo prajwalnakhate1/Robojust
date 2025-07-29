@@ -6,9 +6,26 @@ const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
-  if (loading) return null; // or <Spinner />
+  // ⏳ Still checking auth
+  if (loading) {
+    return <div className="text-center py-10">Loading...</div>;
+  }
 
-  return user ? children : <Navigate to="/login" state={{ from: location }} replace />;
+  // 🔒 Not logged in
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // 🔐 Admin route but user is not admin
+  if (
+    location.pathname.startsWith('/admin') &&
+    !user.isAdmin
+  ) {
+    return <Navigate to="/" replace />;
+  }
+
+  // ✅ All good
+  return children;
 };
 
 export default ProtectedRoute;

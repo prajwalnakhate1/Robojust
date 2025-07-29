@@ -4,7 +4,7 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import './SearchResults.css';
 
-// Import product images
+// Product images imports (same as before)
 import img1 from '../../assets/images/img1.jpg';
 import img2 from '../../assets/images/img2.jpg';
 import img3 from '../../assets/images/img3.jpg';
@@ -25,24 +25,24 @@ import img20 from '../../assets/images/img20.jpg';
 import img21 from '../../assets/images/img21.jpeg';
 
 const productList = [
-  { name: "1k Ohm 0.25W Metal Film Resistor", image: img1, price: "$1.18" },
-  { name: "DIP LED RED 8mm", image: img2, price: "$1.18" },
-  { name: "Infrared IR Wireless Remote Control Module Kit for Arduino", image: img3, price: "$88.50" },
-  { name: "IR Sensor Module", image: img4, price: "$35.40" },
-  { name: "JUMPER WIRE FF 40 PC", image: img5, price: "$59.00" },
-  { name: "JUMPER WIRE MM 40 PC", image: img6, price: "$59.00" },
-  { name: "LCD DISPLAY 12C", image: img7, price: "$182.90" },
-  { name: "SmartElex Soil Moisture Sensor", image: img10, price: "$41.30" },
-  { name: "ULTRASONIC SENSOR", image: img11, price: "$82.60" },
-  { name: "18650 Battery Holder", image: img12, price: "$23.60" },
-  { name: "esp32", image: img13, price: "$211.82" },
-  { name: "ARDUINO UNO DIP & CABLE", image: img15, price: "$649.00" },
-  { name: "Li-ion Battery 2500mAh", image: img16, price: "$88.50" },
-  { name: "BREADBOARD 400 PIN", image: img17, price: "$41.30" },
-  { name: "CAR CHASSIS", image: img18, price: "$566.40" },
-  { name: "Soil Moisture Sensor", image: img19, price: "$116.82" },
-  { name: "DIP LED GREEN 5mm", image: img20, price: "$1.18" },
-  { name: "MOTOR DRIVER SHIELD", image: img21, price: "$177.00" },
+  { name: "1k Ohm 0.25W Metal Film Resistor", image: img1, price: "1.18" },
+  { name: "DIP LED RED 8mm", image: img2, price: "1.18" },
+  { name: "Infrared IR Wireless Remote Control Module Kit for Arduino", image: img3, price: "88.50" },
+  { name: "IR Sensor Module", image: img4, price: "35.40" },
+  { name: "JUMPER WIRE FF 40 PC", image: img5, price: "59.00" },
+  { name: "JUMPER WIRE MM 40 PC", image: img6, price: "59.00" },
+  { name: "LCD DISPLAY 12C", image: img7, price: "182.90" },
+  { name: "SmartElex Soil Moisture Sensor", image: img10, price: "41.30" },
+  { name: "ULTRASONIC SENSOR", image: img11, price: "82.60" },
+  { name: "18650 Battery Holder", image: img12, price: "23.60" },
+  { name: "esp32", image: img13, price: "211.82" },
+  { name: "ARDUINO UNO DIP & CABLE", image: img15, price: "649.00" },
+  { name: "Li-ion Battery 2500mAh", image: img16, price: "88.50" },
+  { name: "BREADBOARD 400 PIN", image: img17, price: "41.30" },
+  { name: "CAR CHASSIS", image: img18, price: "566.40" },
+  { name: "Soil Moisture Sensor", image: img19, price: "116.82" },
+  { name: "DIP LED GREEN 5mm", image: img20, price: "1.18" },
+  { name: "MOTOR DRIVER SHIELD", image: img21, price: "177.00" },
 ];
 
 const SearchResults = () => {
@@ -84,43 +84,40 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="search-results-container">
-      <h1 className="search-results-title">
-        Search Results for: <span className="text-black">"{query}"</span>
+    <div className="products-page">
+      <h1 className="text-2xl font-bold text-center mb-6">
+        Search Results for: <span className="text-blue-700">"{query}"</span>
       </h1>
 
       {filteredProducts.length === 0 ? (
-        <p className="no-results">No products found for "{query}".</p>
+        <p className="text-center text-gray-600">No products found for "{query}".</p>
       ) : (
         <div className="products-grid">
           {filteredProducts.map((product) => (
             <div key={product.name} className="product-card">
-              <div className="product-image-wrapper">
+              <div className="product-image-container">
                 <img
                   src={product.image}
                   alt={product.name}
                   className="product-image"
                 />
               </div>
-              <div className="product-info">
-                <h3 className="product-name line-clamp-2">
-                  {product.name}
-                </h3>
-                <p className="product-price">{product.price}</p>
-                <div className="product-buttons">
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="product-button btn-add-to-cart"
-                  >
-                    Add to Cart
-                  </button>
-                  <button
-                    onClick={() => handleBuyNow(product)}
-                    className="product-button btn-buy-now"
-                  >
-                    Buy Now
-                  </button>
-                </div>
+              <h3 className="product-name">{product.name}</h3>
+              <p className="product-price">{product.price}</p>
+              <div className="product-buttons">
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  className="add-to-cart-btn"
+                  disabled={isInCart(product.name)}
+                >
+                  {isInCart(product.name) ? "In Cart" : "Add to Cart"}
+                </button>
+                <button
+                  onClick={() => handleBuyNow(product)}
+                  className="buy-now-btn"
+                >
+                  Buy Now
+                </button>
               </div>
             </div>
           ))}

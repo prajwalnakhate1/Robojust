@@ -179,7 +179,7 @@ function App() {
                       }
                     />
 
-                    {/* Fallback Route */}
+                    {/* Fallback */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

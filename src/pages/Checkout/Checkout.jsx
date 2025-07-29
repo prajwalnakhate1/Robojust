@@ -58,7 +58,11 @@ const Checkout = () => {
     0
   );
   const shipping = 0;
+<<<<<<< HEAD
   const tax = subtotal * 0;
+=======
+  const tax = subtotal * 0.1;
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
   const total = subtotal + shipping + tax;
 
   const stepLabels = ['Address', 'Payment', 'Review'];
@@ -126,7 +130,11 @@ const Checkout = () => {
         key,
         amount: Math.round(total * 100),
         currency: 'INR',
+<<<<<<< HEAD
         name: 'Robojust',
+=======
+        name: 'Robojust Technology',
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
         description: 'Order Payment',
         handler: async (response) => {
           await verifyRazorpayPayment(response, orderId);

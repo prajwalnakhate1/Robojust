@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import { useState, useMemo } from 'react';
 
+=======
+import React, { useState, useEffect, useMemo } from 'react';
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Products from '../Products/Products';
@@ -7,6 +11,10 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import './Home.css';
 
+<<<<<<< HEAD
+=======
+// Import your images
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
 import img1 from '../../assets/images/img1.jpg';
 import img2 from '../../assets/images/img2.jpg';
 import img3 from '../../assets/images/img3.jpg';
@@ -48,12 +56,18 @@ const productList = [
 ];
 
 const Home = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
     category: '',
     sortBy: 'featured',
     priceRange: [0, 1000],
     inStock: false,
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { user } = useAuth();
   const { addToCart } = useCart();
@@ -99,17 +113,33 @@ const Home = () => {
     return acc;
   }, {});
 
+  if (isLoading) {
+    return (
+      <div className="fast-loader">
+        <div className="loader-content">
+          <div className="spark-icon">⚡</div>
+          <div className="brand-name">Robojust</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="home-container">
       <main className="max-w-7xl mx-auto px-4 py-5">
         <section className="filter-section mb-5">
           <div className="flex justify-between items-center mb-3">
             <h2 className="filter-title">Filter Products</h2>
+<<<<<<< HEAD
             <button onClick={resetFilters} className="text-blue-600 text-sm hover:underline">
+=======
+            <button onClick={resetFilters} className="reset-btn">
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
               Reset Filters
             </button>
           </div>
 
+<<<<<<< HEAD
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {/* Category */}
             <div>
@@ -118,6 +148,15 @@ const Home = () => {
                 value={filters.category}
                 onChange={(e) => setFilters({ ...filters, category: e.target.value })}
                 className="w-full border p-2 rounded text-sm"
+=======
+          <div className="filter-grid">
+            <div className="filter-group">
+              <label className="filter-label">Category</label>
+              <select
+                value={filters.category}
+                onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                className="filter-select"
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
               >
                 <option value="">All Categories</option>
                 {Object.keys(categoryCounts).map((cat) => (
@@ -128,6 +167,7 @@ const Home = () => {
               </select>
             </div>
 
+<<<<<<< HEAD
             {/* Sort */}
             <div>
               <label className="text-sm font-medium block mb-1">Sort By</label>
@@ -135,6 +175,14 @@ const Home = () => {
                 value={filters.sortBy}
                 onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
                 className="w-full border p-2 rounded text-sm"
+=======
+            <div className="filter-group">
+              <label className="filter-label">Sort By</label>
+              <select
+                value={filters.sortBy}
+                onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
+                className="filter-select"
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
               >
                 <option value="featured">Featured</option>
                 <option value="price-low">Price: Low to High</option>
@@ -142,17 +190,27 @@ const Home = () => {
               </select>
             </div>
 
+<<<<<<< HEAD
             {/* Price Range */}
             <div>
               <label className="text-sm font-medium block mb-1">Price Range</label>
               <div className="flex items-center space-x-2">
+=======
+            <div className="filter-group">
+              <label className="filter-label">Price Range</label>
+              <div className="range-inputs">
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
                 <input
                   type="range"
                   min="0"
                   max="1000"
                   value={filters.priceRange[0]}
                   onChange={(e) => handlePriceChange(e, 0)}
+<<<<<<< HEAD
                   className="range-input"
+=======
+                  className="range-slider"
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
                 />
                 <input
                   type="range"
@@ -160,7 +218,11 @@ const Home = () => {
                   max="1000"
                   value={filters.priceRange[1]}
                   onChange={(e) => handlePriceChange(e, 1)}
+<<<<<<< HEAD
                   className="range-input"
+=======
+                  className="range-slider"
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
                 />
               </div>
               <p className="range-value">
@@ -168,16 +230,33 @@ const Home = () => {
               </p>
             </div>
 
+<<<<<<< HEAD
        
           
           </div>
         </section>
 
         <p className="text-sm text-gray-600 mb-4">
+=======
+            <div className="filter-group">
+              <label className="stock-checkbox">
+                <input
+                  type="checkbox"
+                  checked={filters.inStock}
+                  onChange={(e) => setFilters({ ...filters, inStock: e.target.checked })}
+                />
+                In Stock Only
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <p className="product-count">
+>>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
           Showing {filteredProducts.length} of {productList.length} products
         </p>
 
-        <Products products={filteredProducts} />
+        <Products products={filteredProducts} onBuyNow={handleBuyNow} />
       </main>
     </div>
   );
