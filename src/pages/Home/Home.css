@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-/* === Home Page Container === */
-=======
 /* ===== Fast Loading Animation ===== */
 .fast-loader {
   position: fixed;
@@ -46,23 +43,12 @@
 }
 
 /* ===== Main Container ===== */
->>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
 .home-container {
   background: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
   min-height: 100vh;
   padding: 1rem;
 }
 
-<<<<<<< HEAD
-/* === Filter Section (Reduced Height) === */
-.filter-section {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1.25rem;
-=======
 /* ===== Filter Section ===== */
 .filter-section {
   background: white;
@@ -71,46 +57,10 @@
   padding: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-bottom: 1.5rem;
->>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
 }
 
 /* === Filter Title === */
 .filter-title {
-<<<<<<< HEAD
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
-}
-
-/* === Range Slider === */
-.range-input {
-  width: 100%;
-  height: 4px;
-  margin: 0.5rem 0;
-}
-
-.range-value {
-  font-size: 0.75rem;
-  color: #475569;
-}
-
-/* === Responsive Styles === */
-@media (max-width: 768px) {
-  .filter-section {
-    padding: 0.6rem;
-  }
-  
-  .filter-title {
-    font-size: 0.95rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .filter-section {
-    padding: 0.5rem;
-    border-radius: 6px;
-=======
   font-size: 1.25rem;
   font-weight: 600;
   color: #1e293b;
@@ -209,6 +159,5 @@
   
   .home-container {
     padding: 0.5rem;
->>>>>>> 965054e692d1292787da422a24f0eb7af0f7c340
   }
 }
