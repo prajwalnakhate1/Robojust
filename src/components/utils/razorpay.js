@@ -39,7 +39,7 @@ export const createRazorpayOrder = async (amount, currency = 'INR', receipt, not
           'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`,
         },
         body: JSON.stringify({
-          amount: Math.round(amount * 100), // Paise
+          amount: Math.round(amount * 100), // Convert to paise
           currency,
           receipt,
           notes,
@@ -53,7 +53,6 @@ export const createRazorpayOrder = async (amount, currency = 'INR', receipt, not
     }
 
     const data = await response.json();
-
     if (!data.id) throw new Error('Invalid Razorpay order response');
 
     return data;
@@ -113,11 +112,11 @@ export const initiateRazorpayPayment = async (options) => {
         amount: Math.round(options.amount * 100),
         currency: options.currency || 'INR',
         order_id: options.order_id,
-        name: options.name || 'VoltX Technologies',
-        description: options.description || 'Payment for your purchase',
+        name: options.name || 'Robojust',
+        description: options.description || 'Purchase from Robojust',
         image: '/logo.png',
         prefill: options.prefill || {},
-        theme: options.theme || { color: '#3399cc' },
+        theme: options.theme || { color: '#0d6efd' },
         handler: (response) => {
           options.handler?.(response);
           resolve();
@@ -155,21 +154,23 @@ export const completeRazorpayPaymentFlow = async (amount, paymentOptions) => {
       amount,
       'INR',
       `order_${Date.now()}`,
-      { source: 'voltx_checkout' }
+      { source: 'robojust_checkout' }
     );
 
     await initiateRazorpayPayment({
       amount,
       order_id: order.id,
       key: import.meta.env.VITE_RAZORPAY_KEY,
-      description: paymentOptions.productDescription || 'Purchase',
+      description: paymentOptions.productDescription || 'Robotics Purchase',
       prefill: paymentOptions.customerDetails,
-      theme: { color: paymentOptions.themeColor || '#3399cc' },
+      theme: { color: paymentOptions.themeColor || '#0d6efd' },
       handler: async (response) => {
         try {
           const verification = await verifyPayment(response);
           if (verification.success) {
-            paymentOptions.onSuccess?.(verification.paymentId || response.razorpay_payment_id);
+            paymentOptions.onSuccess?.(
+              verification.paymentId || response.razorpay_payment_id
+            );
           } else {
             paymentOptions.onFailure?.({
               code: 'VERIFICATION_FAILED',

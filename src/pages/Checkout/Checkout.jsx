@@ -126,7 +126,7 @@ const Checkout = () => {
         key,
         amount: Math.round(total * 100),
         currency: 'INR',
-        name: 'VoltX Electronics',
+        name: 'Robojust',
         description: 'Order Payment',
         handler: async (response) => {
           await verifyRazorpayPayment(response, orderId);

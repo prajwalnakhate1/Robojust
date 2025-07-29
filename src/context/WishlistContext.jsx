@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, createContext, useRef } from 'react';
-import { doc, getDoc, setDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './AuthContext';
 import { toast } from 'react-toastify';
@@ -13,8 +13,7 @@ export const WishlistProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const notificationLock = useRef(false);
 
-  // Centralized notification control
-  const showWishlistNotification = (message, type = 'success') => {
+  const showNotification = (message, type = 'success') => {
     if (notificationLock.current) return;
     
     notificationLock.current = true;
@@ -27,7 +26,6 @@ export const WishlistProvider = ({ children }) => {
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
-      draggable: true,
       onClose: () => {
         notificationLock.current = false;
       }
@@ -54,11 +52,11 @@ export const WishlistProvider = ({ children }) => {
             setWishlistItems(localItems);
           }
         } else {
-          setWishlistItems(JSON.parse(localStorage.getItem('wishlist') || []));
+          setWishlistItems(JSON.parse(localStorage.getItem('wishlist') || '[]'));
         }
       } catch (error) {
         console.error('Wishlist load error:', error);
-        showWishlistNotification('Failed to load wishlist', 'error');
+        showNotification('Failed to load wishlist', 'error');
       } finally {
         setLoading(false);
       }
@@ -85,27 +83,27 @@ export const WishlistProvider = ({ children }) => {
     return () => clearTimeout(timer);
   }, [wishlistItems, user]);
 
-  const addToWishlist = async (product) => {
-    if (!product.id || loading) return;
+  const addToWishlist = (product) => {
+    if (!product?.id || loading) return;
 
     setWishlistItems(prev => {
       const exists = prev.some(item => item.id === product.id);
       if (exists) {
-        showWishlistNotification('Item already in wishlist', 'info');
+        showNotification('Item already in wishlist', 'info');
         return prev;
       }
-      showWishlistNotification('Added to wishlist');
+      showNotification('Added to wishlist');
       return [...prev, product];
     });
   };
 
-  const removeFromWishlist = async (productId) => {
+  const removeFromWishlist = (productId) => {
     if (loading) return;
 
     setWishlistItems(prev => {
       const updated = prev.filter(item => item.id !== productId);
       if (updated.length !== prev.length) {
-        showWishlistNotification('Removed from wishlist');
+        showNotification('Removed from wishlist');
       }
       return updated;
     });

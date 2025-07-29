@@ -1,45 +1,47 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { 
+  getFirestore, 
+  initializeFirestore, 
+  persistentLocalCache,
+  CACHE_SIZE_UNLIMITED 
+} from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAHnzFBq49KOJlsixDdOAJEATo-kWqwPmw",
-  authDomain: "ecommerce-site-2bfbe.firebaseapp.com",
-  projectId: "ecommerce-site-2bfbe",
-  storageBucket: "ecommerce-site-2bfbe.appspot.com",
-  messagingSenderId: "1078965716895",
-  appId: "1:1078965716895:web:5d371acf3b6bd1bd719faa",
-  measurementId: "G-09XSK8DBN6"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase services
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Auth and Storage
 const auth = getAuth(app);
-const db = getFirestore(app);
 const storage = getStorage(app);
 
-// Enable offline persistence
-if (typeof window !== 'undefined') {
-  enableIndexedDbPersistence(db).catch((err) => {
-    if (err.code === 'failed-precondition') {
-      console.warn('Offline persistence already enabled in another tab');
-    } else if (err.code === 'unimplemented') {
-      console.warn('Browser does not support offline persistence');
-    }
-  });
-}
-
-export { app, auth, db, storage };
+// Initialize Firestore with persistent cache (updated configuration)
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    cacheSizeBytes: CACHE_SIZE_UNLIMITED
+  })
+});
 
 // Connection test utility
 export const testFirestoreConnection = async () => {
   try {
     const testRef = doc(db, '_connections', 'test');
-    await setDoc(testRef, { timestamp: new Date() });
+    await setDoc(testRef, { timestamp: serverTimestamp() });
     return true;
   } catch (error) {
     console.error('Firestore connection failed:', error);
     return false;
   }
 };
+
+export { app, auth, db, storage };
